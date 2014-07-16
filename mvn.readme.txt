@@ -1,0 +1,14 @@
+mvn archetype:create -DgroupId=me.xm.oml -DartifactId=oml -DarchetypeArtifactId=maven-archetype-webapp
+cd oml
+mkdir src\main\java
+mkdir src\test\java
+
+mvn eclipse:eclipse
+
+export jabsorb in vtweb
+add AjaxProxy class
+modify web.xml for ajax request
+
+add ajax methods
+generate AjaxProxy.js
+

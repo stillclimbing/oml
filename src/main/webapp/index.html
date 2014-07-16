@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<title>Classical Music HD</title>
+
+<script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="js/lib/jsonrpc-1.3.1.min.js"></script>
+<script type="text/javascript" src="js/AjaxProxy.js"></script>
+
+<!---------------data table------------------->
+<link rel="stylesheet" href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.1/css/jquery.dataTables.css"/>
+<script src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.1/jquery.dataTables.min.js"></script>
+
+<!---------------fancy box------------------->
+<script type="text/javascript" src="js/lib/fancybox/jquery.fancybox.pack.js"></script>
+<link rel="stylesheet" href="js/lib/fancybox/jquery.fancybox.css" type="text/css" media="screen" />
+<script type="text/javascript" src="js/lib/fancybox/tinysort.js"></script>
+<style>
+@font-face {
+    font-family: 'sosa';
+    src: url('css/sosa-regular-webfont.eot'); /* IE9*/
+    src: url('css/sosa-regular-webfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+         url('css/sosa-regular-webfont.woff') format('woff'), /* chrome、firefox */
+         url('css/sosa-regular-webfont.ttf')  format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+         url('css/sosa-regular-webfont.svg#svgFontName') format('svg'); /*  iOS 4.1- */
+    }
+    
+.sosa {font-family:"sosa";color:#333}
+
+	body{
+		font-family:Georgia ;
+		margin:0;
+		overflow-x:hidden;
+	}
+	
+	img{
+		border:none
+	}
+	td{
+		vertical-align:top
+	}
+	
+	.clum_cover{
+		width:100px;
+		padding:0 !important;
+		background-color:#fff !important;
+
+	}
+	.clum_cover img{
+		width:130px;border:none;
+		margin:8px;
+		-webkit-box-shadow: 0 8px 6px -6px black;
+	  -moz-box-shadow: 0 8px 6px -6px black;
+	  box-shadow: 0 8px 6px -6px black;
+	}
+	.clum_album{
+		font-weight:bold;
+	}
+	table.dataTable td{
+		padding-left:10px;
+	}
+	table.dataTable thead th{
+		padding:0;
+		font-weight:normal;
+		color:#bbb;
+	}
+	table.dataTable tr.even td.sorting_1{
+		background-color:#CCC;
+	}
+	table.dataTable tr.odd td.sorting_1{
+		background-color:#DDD;
+	}
+	table.dataTable tr.odd{
+		background-color:#EEE;
+	}
+	.dataTables_info{
+		font-size:10pt;
+		font-family:Arial;
+		padding:10px 0 0 13px;
+		color:#bbb
+	}
+	.tag_in_column{
+			padding:5px 5px 0 0;
+			float:left;
+			color:#666;
+	}
+	.tag_in_column a{
+			text-decoration:none;
+			color:#666;
+			font-size:8pt;
+	}
+	.tag_in_column a:hover{
+			color:#bbb;
+	}
+	#tableDiv{
+		font-family:Trebuchet MS;
+		margin-top:45px
+	}
+	#barDiv{
+		position:fixed;z-index:99;height:22px;background-color:#333;padding:2px 5px 7px;opacity:0.9;
+		color:#EEE;
+		left:85px;
+		font-weight:bold;
+		font-size:18pt;
+	  box-shadow: 0 8px 6px -6px #666;
+	}
+
+	#barDiv a{
+		color:#fff;
+		text-decoration:none;
+		float:right;
+		top:8px;
+	}
+	
+	.dataTables_filter{
+		position:fixed;
+		top:3px;
+		right:10px;
+		z-index:99;
+		font-family:Arial;
+		color:#fff;
+	}
+	
+	.dataTables_filter input{
+		border:1px solid #666;
+		border-radius:0;
+	}
+	
+	
+	.tags{
+		padding-top:30px;
+		font-size:9pt;
+		background:#ddb344;
+		width:200px;
+		height:100%;
+		left:0;
+
+		position:fixed;
+	}
+	.tags ul{
+		margin:1em 0;
+		padding:0 10px;
+		text-align:center;
+		position:relative;
+		top:15px;
+		}
+	.tags li{
+		margin:0;
+		padding:0;
+		list-style:none;
+		display:inline-block;
+		}
+	.tags li a{
+		text-decoration:none;
+		color:#000;
+		padding:0 2px;	
+		}
+	.tags li a:hover{	
+		color:#fff;
+		}		
+	
+	.tag1{font-size:100%;}
+	.tag2{font-size:120%;}
+	.tag3{font-size:140%;}
+	.tag4{font-size:160%;}
+	.tag5{font-size:180%;}
+	.tag6{font-size:200%;}
+	.tag7{font-size:220%;}
+
+
+/* Override to display navigation arrows permanently and move them outside the image area */
+.fancybox-nav span { visibility:visible !important }
+.fancybox-next span{right:50px !important}
+.fancybox-prev span{left:50px !important}
+.fancybox-next {right:-100px !important;width:200px}
+.fancybox-prev {left:-100px !important;width:200px}
+</style>
+
+</head>
+<body>
+    <script type="text/javascript">  
+    	/**
+    	Album folder must follow below pattern:
+    	Album Name[Artist][Label][DiscId(optional)]
+    	- Artists could be sepereated by comma and each one will be counted as a tag of the album
+    	- label will be count as tag of album
+    	- first alphabatical image file in folder will be considered as album cover
+    	- script will check files ended with .tag in folder and count file name as a tag. eg 留声机百大.tag
+    	**/
+    	var systemSetting;
+			$(document).ready(function(){
+				systemSetting = jsonrpc.AjaxProxy.getSystemSetting();
+				console.log(systemSetting);
+				 
+				var albums = jsonrpc.AjaxProxy.getAlbums().list;
+    		generateHtml(albums);
+			});
+			
+			function refreshData(){
+				jsonrpc.AjaxProxy.refresh();
+				var albums = jsonrpc.AjaxProxy.getAlbums().list;
+    		generateHtml(albums);
+			}
+
+			function fnShowHide( iCol )
+			{
+				/* Get the DataTables object again - this is not a recreation, just a get of the object */
+				var oTable = $('#tbl').dataTable();
+				
+				var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
+				oTable.fnSetColumnVis( iCol, bVis ? false : true );
+			}
+			
+			function filterTable(aElement){
+				var key = aElement.innerHTML;
+				$("input").val(key);
+				$("#tbl").dataTable().fnFilter(key, null, false, true, false);
+				$("#tbl").dataTable().fnDraw();
+				return;
+			}
+			
+			function generateHtml(albumsData){	
+				var SHOW_TAG_WHEN_OCCURED_MORE_THAN =3;
+    		var TAG_MAX_RANK=4;
+    	
+        var tagsMap = [];
+        var totalTags = 0;
+        function _addTag(t){
+        	if(tagsMap[t]) tagsMap[t] = tagsMap[t]+1;
+			    else tagsMap[t]=1;
+			    totalTags++;
+        }
+        
+        var tableHtml = [];
+				tableHtml.push("<table id='tbl'>");
+				tableHtml.push("<thead><th>Cover</th><th>Album</th><th>Artist</th><th>Label</th><th>disc Id</th><th>Album</th></thead>");
+				tableHtml.push("<tbody>");
+
+        for (var i=0;i<albumsData.length;i++) { 
+            var album = albumsData[i];
+            album.coverFile = systemSetting.dataPath + album.pathHash + "/"+album.folderName+"/"+album.coverFile;
+						album.coverThumbFile = systemSetting.dataPath + album.pathHash+"/"+album.folderName+"/"+album.coverThumbFile;
+						album.folderPath = systemSetting.paths.map[album.pathHash] + "/"+album.folderName ;
+						tableHtml.push("<tr><td class='clum_cover'>"+"<a class='grouped_elements' rel='group1' href=\""+album.coverFile.replace("\\","\\\\")+"\">"+"<img src=\""+album.coverThumbFile.replace("\\","\\\\")+"\"/>"+"</a>"+"</td>");  
+            tableHtml.push("<td class='clum_album'>"+"<a style='color:#000;text-decoration:none' href=\"prompt('path','"+album.folderPath+"'\">"+album.name+"</a>"+"</td>");
+            tableHtml.push("<td>"+album.artist+"</td>");
+            tableHtml.push("<td>"+(album.label?album.label:"")+"</td>");
+            tableHtml.push("<td>"+(album.discId?(album.discId):"")+"</td>");
+            
+            var as = album.artist.split(",");
+            for(var j=0;j<as.length;j++)
+            	_addTag($.trim(as[j]));
+            _addTag(album.label);
+            
+            var mixedAlbumStr = "<h3 style='margin:7px 0 10px 0'>"+"<a style='color:#000;text-decoration:none' href=\""+album.folderPath+"\">"+album.name+"</a>"+"</h3>"
+            	+	"<h4 style='margin:5px 0 15px 0'>"+album.artist+"</h4>"
+							+ album.label + (album.discId?(", "+album.discId):"");
+						
+            var tagsStr='<br/>';
+      			if(album.tags) for (var j=0;j<album.tags.list.length;j++) { 
+      						var tag = album.tags.list[j];
+	            		tagsStr+='<div class="tag_in_column"><a href="javascript:void(0)" onclick="javascript:filterTable(this)">'+tag+'</a>'+(j==album.tags.list.length-1?'':' | ')+'</div>';
+	            		_addTag(tag);
+      			}
+      			mixedAlbumStr+=tagsStr;
+						tableHtml.push("<td>"+mixedAlbumStr+"</td>");
+            tableHtml.push("</tr>");
+        }
+        
+        tableHtml.push("</tbody></table>");
+    		$("#rightDiv").width($(window).width()-220);
+        $("#barDiv").width($(window).width()-105);
+        //$("#rightDiv").height($(window).height()-30);
+        
+        $("#tableDiv").html(tableHtml.join(""));
+        $('#tbl').dataTable({"bPaginate": false,"aoColumnDefs": [	{ "bVisible": false, "aTargets": [0, 5]}]}); 
+        $("a.grouped_elements").fancybox({closeClick:false,helpers:{overlay:{closeClick:false}}});
+ 
+        $("#tableDiv").scrollTop(600);
+        
+        $("#tagUl").html("");
+        for(key in tagsMap) {
+					if(tagsMap[key]<SHOW_TAG_WHEN_OCCURED_MORE_THAN) continue;
+					var rank = Math.ceil(100*tagsMap[key]/totalTags);
+					if(rank>TAG_MAX_RANK) rank =TAG_MAX_RANK;
+					$("#tagUl").append('<li class="tag'+rank+'"><a href="javascript:void(0)" onclick="javascript:filterTable(this)">'+key+'</a></li>');
+				}
+				$("#tagUl li").tsort({order:"asc"});
+				
+				
+    	}
+    	
+    </script>  
+    
+    <div class="tags">
+			<ul id="tagUl"></ul>
+		</div>
+		
+		<div style="float:left;overflow-y:auto;overflow-x:hidden;left:200px;position:absolute" id="rightDiv">
+			<div id="barDiv">
+				<div style="float:left"><span style='color:#ddb344'>Classical</span> Music Collection HD</div>
+				<div id="barIconDiv" style="float:right;padding-right:250px;width:150px">
+					<a href="javascript:void(0);" onclick="fnShowHide(0);fnShowHide(1);fnShowHide(2);fnShowHide(3);fnShowHide(4);fnShowHide(5);" class="sosa" style="padding:0 10px">A</a>
+					<a href="javascript:void(0);" onclick="refreshData();" class="sosa" style="padding:0 20px">U</a>
+				</div>
+			</div>
+			<div id ="tableDiv"></div>
+		</div>
+</body>
+</html>

@@ -1,0 +1,1 @@
+var jsonrpc = new JSONRpcClient(["AjaxProxy.main","AjaxProxy.refresh","AjaxProxy.getAlbums","AjaxProxy.getSystemSetting"], "/oml/ajax");
