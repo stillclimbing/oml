@@ -12,7 +12,7 @@ import java.util.List;
 public class AlbumDAO {
 
 	private static final String INSERT = "INSERT INTO album"
-			+ "(pathHash,folderName,name,artist,label,coverThumbFile,coverFile,discId,tags,lastModifiedTime,desc,totalDisc)"
+			+ "(pathHash,folderName,name,artist,label,coverThumbFile,coverFile,discId,tags,description,totalDisc,lastModifiedTime)"
 			+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 	private static final java.lang.String GET_ALL = "select * from album order by lastModifiedTime desc";
 
@@ -39,9 +39,9 @@ public class AlbumDAO {
 			pstmt.setString(++i, item.coverFile);
 			pstmt.setString(++i, item.discId);
 			pstmt.setString(++i, item.getTagsStr());
-			pstmt.setLong(++i, item.getLastModified());
 			pstmt.setString(++i, item.getDesc());
 			pstmt.setInt(++i, item.getTotalDiscs());
+			pstmt.setLong(++i, item.getLastModified());
 
 			int intResult = pstmt.executeUpdate();
 			//logger.info("record inserted in db: {}");
@@ -78,6 +78,8 @@ public class AlbumDAO {
 				item.coverFile = rs.getString("coverFile");
 				item.discId = rs.getString("discId");
 				item.setTagsStr(rs.getString("tags"));
+				item.setDesc(rs.getString("description"));
+				item.setTotalDiscs(rs.getInt("totalDisc"));
 				albums.add(item);
 			}
 			return albums;

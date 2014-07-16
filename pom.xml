@@ -39,7 +39,13 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
-
+<dependency>
+    <groupId>org.cuelib</groupId>
+    <artifactId>cuelib</artifactId>
+    <version>1.2.1</version>
+    <scope>system</scope>
+    <systemPath>${project.basedir}/lib/cuelib-1.2.1-2008-06-13.jar</systemPath>
+</dependency>
 
 <dependency>
 	<groupId>commons-httpclient</groupId>
