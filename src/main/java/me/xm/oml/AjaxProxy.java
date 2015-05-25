@@ -181,10 +181,10 @@ public class AjaxProxy {
 				albm.setTotalDiscs(cues.size());
 				String desc = "";
 				for(CueSheet c:cues){
-					if(cues.size()==1) desc+=c.getTitle()+"\n";
+					if(cues.size()!=1) desc+=c.getTitle()+"\n";
 					List<TrackData> ts = c.getAllTrackData();
 					for (TrackData td : ts)
-						desc+=td.getNumber()+"."+td.getTitle()+"\n";
+						desc+=(td.getNumber()<10?" ":"")+td.getNumber()+"."+td.getTitle()+"\n";
 					desc+="\n";
 				}
 				albm.setDesc(desc);
